@@ -5,7 +5,9 @@
       <router-link to="/favorite">Favorite</router-link>
       <select @change="onChange" v-model="selected">
         <option disabled value="">Choose breed</option>
-        <option v-for="breed in breeedsArray" :key="breed">{{ breed }}</option>
+        <option v-for="breed in breeedsArray" :key="breed + Date.now()">
+          {{ breed }}
+        </option>
       </select>
     </div>
     <router-view />
@@ -29,13 +31,19 @@ export default {
       },
     }),
   },
-  mounted() {
+  created() {
     this.getAllBreeds();
   },
+
   methods: {
-    ...mapActions("dogs", ["getAllBreeds", "getDogsImagesByBreed"]),
+    ...mapActions("dogs", [
+      "getAllBreeds",
+      "getDogsImagesByBreed",
+      "setSelectedBreed",
+    ]),
     async onChange(event) {
       let breedName = event.target.value;
+      this.setSelectedBreed({ breedName });
       await this.getDogsImagesByBreed({ breedName });
       this.$router.push({ name: "Dogs" });
     },
@@ -49,8 +57,6 @@ export default {
 }
 #breedSelector {
   display: flex;
-  #vs1__listbox {
-  }
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
