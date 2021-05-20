@@ -1,1 +1,3 @@
 export const GET_ALL_BREEDS = "GET_ALL_BREEDS";
+export const GET_DOGS_IMAGES_BY_BREED = "GET_DOGS_IMAGES_BY_BREED";
+export const SET_LOADING = "SET_LOADING";
