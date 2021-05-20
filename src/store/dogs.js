@@ -5,10 +5,14 @@ import {
   SET_LOADING,
   SET_ACTIVE_STATE,
   SET_SELECTED_BREED,
+  CLEAR_DOGS_IMAGES,
 } from "./modules/types";
 export default {
   namespaced: true,
   actions: {
+    clearDogsImagesData({ commit }) {
+      commit({ type: CLEAR_DOGS_IMAGES });
+    },
     setSelectedBreed({ commit }, { breedName }) {
       commit({ type: SET_SELECTED_BREED, breedName });
     },
@@ -79,10 +83,13 @@ export default {
       console.log(`activeState = ${payload}`);
       state.activeState = payload;
     },
+    CLEAR_DOGS_IMAGES(state) {
+      state.dogsImages = [];
+    },
   },
   state: {
     breeds: null,
-    selectedBreed: null,
+    selectedBreed: "",
     dogsImages: [],
     isLoading: {
       dogsImages: false,

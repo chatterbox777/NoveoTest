@@ -3,7 +3,7 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/favorite">Favorite</router-link>
-      <select @change="onChange" v-model="selected">
+      <select @change="onChange" v-model="selectedBreedReactive">
         <option disabled value="">Choose breed</option>
         <option v-for="breed in breeedsArray" :key="breed + Date.now()">
           {{ breed }}
@@ -18,18 +18,25 @@ import { mapState, mapActions } from "vuex";
 
 export default {
   name: "App",
-  data() {
-    return {
-      selected: "",
-    };
-  },
   computed: {
     ...mapState("dogs", {
       breeds: (state) => state.breeds,
-      breeedsArray() {
-        return Object.keys(this?.breeds ?? {});
-      },
+      selectedBreed: (state) => state.selectedBreed,
     }),
+    selectedBreedReactive: {
+      get() {
+        return this.selectedBreed;
+      },
+      async set(value) {
+        this.clearDogsImagesData();
+        this.setSelectedBreed({ value });
+        await this.getDogsImagesByBreed({ value });
+        this.$router.push({ name: "Dogs" });
+      },
+    },
+    breeedsArray() {
+      return Object.keys(this?.breeds ?? {});
+    },
   },
   created() {
     this.getAllBreeds();
@@ -40,9 +47,11 @@ export default {
       "getAllBreeds",
       "getDogsImagesByBreed",
       "setSelectedBreed",
+      "clearDogsImagesData",
     ]),
     async onChange(event) {
       let breedName = event.target.value;
+      this.clearDogsImagesData();
       this.setSelectedBreed({ breedName });
       await this.getDogsImagesByBreed({ breedName });
       this.$router.push({ name: "Dogs" });
