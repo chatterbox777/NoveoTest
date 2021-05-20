@@ -11,18 +11,17 @@
         />
       </div>
     </div>
-    <infinite-loading
-      :distance="200"
-      @infinite="infiniteHandler"
-    ></infinite-loading>
+    <div v-if="dogsImages.length" v-observe-visibility="infiniteHandler"></div>
+    <VLoader v-if="activeState === 'loading'" />
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
-import InfiniteLoading from "vue-infinite-loading";
 import favEmpty from "../assets/favEmpty.svg";
+import VLoader from "./shared/VLoader.vue";
 export default {
+  components: { VLoader },
   name: "Dogs",
   data() {
     return {
@@ -30,9 +29,6 @@ export default {
       isFavouriteShown: true,
       isFavouriteActive: false,
     };
-  },
-  components: {
-    InfiniteLoading,
   },
 
   props: {
@@ -52,22 +48,26 @@ export default {
   mounted() {
     this.getAllBreeds();
   },
+  destroyed() {
+    this.clearDogsImagesData();
+    this.setSelectedBreed({ breedName: "" });
+  },
   methods: {
-    ...mapActions("dogs", ["getAllBreeds", "getDogsImagesByBreed"]),
-    async infiniteHandler($state) {
+    ...mapActions("dogs", [
+      "getAllBreeds",
+      "getDogsImagesByBreed",
+      "clearDogsImagesData",
+      "setSelectedBreed",
+    ]),
+    async infiniteHandler() {
       debugger;
       let that = this;
-      window.infiniteState = $state;
 
       if (
         that.activeState !== "noMoreDataAvailable" &&
         that.activeState !== "loading"
       ) {
         that.getDogsImagesByBreed({ breedName: that.selectedBreed });
-        window.infiniteState.loaded();
-      } else if (that.activeState === "noMoreDataAvailable") {
-        debugger;
-        window.infiniteState.complete();
       }
     },
   },
@@ -77,7 +77,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .main {
-  height: fit-content;
+  height: 1vh;
   .main__dogs {
     display: grid;
     justify-items: center;
