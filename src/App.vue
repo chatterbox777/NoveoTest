@@ -77,17 +77,23 @@ export default {
 }
 
 #nav {
+  background: #636261;
   display: flex;
   flex-direction: row;
   justify-content: center;
   padding: 30px;
   gap: 14px;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  top: 0;
+  left: 0;
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #fcfdff;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: #4dcfe0;
     }
   }
 }

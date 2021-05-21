@@ -36,9 +36,6 @@ export default {
     };
   },
 
-  props: {
-    msg: String,
-  },
   computed: {
     ...mapState("dogs", {
       dogsImages: (state) => state.dogsImages,
@@ -50,7 +47,6 @@ export default {
   mounted() {
     let that = this;
     this.dogs = [];
-    debugger;
     if (localStorage.dogs) {
       that.dogs = JSON.parse(localStorage.dogs).filter((el) => {
         return el.isFavourite === true;
@@ -99,12 +95,13 @@ export default {
 <style scoped lang="scss">
 .main {
   height: 1vh;
+  margin-top: 100px;
   .main__dogs {
     display: grid;
     justify-items: center;
     align-items: center;
     grid-template-columns: repeat(4, 1fr);
-    grid-gap: 10px;
+    grid-gap: 40px;
 
     .imagesRow {
       position: relative;
@@ -113,12 +110,13 @@ export default {
       justify-content: center;
       width: 200px;
       height: 200px;
-      border: 1px solid grey;
-      border-radius: 25px;
       img {
         width: 200px;
         height: 200px;
         object-fit: cover;
+        border: 1px solid grey;
+        box-shadow: 0px 0px 5px 2px grey;
+
         &:hover {
           cursor: pointer;
         }
@@ -140,20 +138,5 @@ export default {
       }
     }
   }
-}
-
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
 }
 </style>

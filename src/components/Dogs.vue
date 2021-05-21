@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="main__dogs">
+    <div v-if="dogs.length > 0" class="main__dogs">
       <div v-for="dog in dogs" :key="dog.id" class="imagesRow">
         <img
           :src="dog.imgSrc"
@@ -17,6 +17,7 @@
         />
       </div>
     </div>
+    <div v-if="dogs.length === 0">...Empty</div>
     <div v-if="dogs.length" v-observe-visibility="infiniteHandler"></div>
     <VLoader v-if="activeState === 'loading'" />
   </div>
@@ -40,9 +41,6 @@ export default {
     };
   },
 
-  props: {
-    msg: String,
-  },
   computed: {
     ...mapState("dogs", {
       dogsImages: (state) => state.dogsImages,
@@ -52,26 +50,19 @@ export default {
     }),
   },
   mounted() {
-    // let that = this;
     this.dogs = [];
-
-    // if (localStorage.dogs) {
-    //   let filteredLocalStorageDogsByBreed = [
-    //     ...JSON.parse(localStorage.dogs),
-    //   ].filter((el) => {
-    //     el.breed === that.selectedBreed;
-    //   });
-
-    //   that.dogs = filteredLocalStorageDogsByBreed;
-    // }
-    console.log(this.dogs);
   },
-  updated() {
-    // debugger;
-    // if (localStorage.dogs) {
-    //   this.dogs = localStorage.dogs.map((el) => JSON.parse(el));
-    // }
-    // console.log(this.dogs);
+
+  beforeDestroy() {
+    let localStorageFavDocs = this.dogs.filter((el) => el.isFavourite);
+    if (localStorage.dogs) {
+      localStorage.dogs = JSON.stringify([
+        ...localStorageFavDocs,
+        ...JSON.parse(localStorage.dogs),
+      ]);
+    } else {
+      localStorage.dogs = JSON.stringify(localStorageFavDocs);
+    }
   },
   destroyed() {
     debugger;
@@ -84,9 +75,6 @@ export default {
       debugger;
       let that = this;
       let copyArr = [...this.dogsImages].map((el) => {
-        // let regexp = /breeds\/(\w+)\//;
-        // let breed = el.match(regexp);
-
         return {
           imgSrc: el,
           isFavourite: false,
@@ -110,7 +98,6 @@ export default {
   },
   methods: {
     ...mapActions("dogs", [
-      "getAllBreeds",
       "getDogsImagesByBreed",
       "clearDogsImagesData",
       "setSelectedBreed",
@@ -127,16 +114,6 @@ export default {
     },
     toggleFavourite(dog) {
       dog.isFavourite = !dog.isFavourite;
-      // let that = this;
-      let localStorageFavDocs = this.dogs.filter((el) => el.isFavourite);
-      if (localStorage.dogs) {
-        localStorage.dogs = JSON.stringify([
-          ...localStorageFavDocs,
-          ...JSON.parse(localStorage.dogs),
-        ]);
-      } else {
-        localStorage.dogs = JSON.stringify(localStorageFavDocs);
-      }
     },
     showFavourite(dog) {
       dog.isFavouriteShown = true;
@@ -163,12 +140,13 @@ export default {
 <style scoped lang="scss">
 .main {
   height: 1vh;
+  margin-top: 100px;
   .main__dogs {
     display: grid;
     justify-items: center;
     align-items: center;
     grid-template-columns: repeat(4, 1fr);
-    grid-gap: 10px;
+    grid-gap: 40px;
 
     .imagesRow {
       position: relative;
@@ -177,12 +155,13 @@ export default {
       justify-content: center;
       width: 200px;
       height: 200px;
-      border: 1px solid grey;
-      border-radius: 25px;
       img {
         width: 200px;
         height: 200px;
         object-fit: cover;
+        border: 1px solid grey;
+        box-shadow: 0px 0px 5px 2px grey;
+
         &:hover {
           cursor: pointer;
         }
@@ -204,20 +183,5 @@ export default {
       }
     }
   }
-}
-
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
 }
 </style>
