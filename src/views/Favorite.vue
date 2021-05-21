@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="main__dogs">
+    <div v-if="dogs.length > 0" class="main__dogs">
       <div v-for="dog in dogs" :key="dog.id" class="imagesRow">
         <img
           :src="dog.imgSrc"
@@ -17,6 +17,7 @@
         />
       </div>
     </div>
+    <div v-if="dogs.length === 0">...Empty</div>
   </div>
 </template>
 
@@ -76,8 +77,13 @@ export default {
       }
     },
     toggleFavourite(dog) {
+      let localStorageFavDocs = this.dogs.filter((el) => el.isFavourite);
       dog.isFavourite = !dog.isFavourite;
       localStorage.dogs = JSON.stringify(this.dogs);
+      localStorage.dogs = JSON.stringify([...localStorageFavDocs]);
+      this.dogs = this.dogs.filter((el) => {
+        return el.isFavourite === true;
+      });
     },
     showFavourite(dog) {
       dog.isFavouriteShown = true;

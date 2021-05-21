@@ -52,18 +52,18 @@ export default {
     }),
   },
   mounted() {
-    let that = this;
+    // let that = this;
     this.dogs = [];
 
-    if (localStorage.dogs) {
-      let filteredLocalStorageDogsByBreed = [
-        ...JSON.parse(localStorage.dogs),
-      ].filter((el) => {
-        el.breed === that.selectedBreed;
-      });
+    // if (localStorage.dogs) {
+    //   let filteredLocalStorageDogsByBreed = [
+    //     ...JSON.parse(localStorage.dogs),
+    //   ].filter((el) => {
+    //     el.breed === that.selectedBreed;
+    //   });
 
-      that.dogs = filteredLocalStorageDogsByBreed;
-    }
+    //   that.dogs = filteredLocalStorageDogsByBreed;
+    // }
     console.log(this.dogs);
   },
   updated() {
@@ -104,6 +104,9 @@ export default {
         that.dogs = [...that.dogs, ...new Set(copyArr)];
       }
     },
+    selectedBreed() {
+      this.dogs = [];
+    },
   },
   methods: {
     ...mapActions("dogs", [
@@ -124,14 +127,15 @@ export default {
     },
     toggleFavourite(dog) {
       dog.isFavourite = !dog.isFavourite;
-      let that = this;
+      // let that = this;
+      let localStorageFavDocs = this.dogs.filter((el) => el.isFavourite);
       if (localStorage.dogs) {
         localStorage.dogs = JSON.stringify([
-          ...that.dogs,
+          ...localStorageFavDocs,
           ...JSON.parse(localStorage.dogs),
         ]);
       } else {
-        localStorage.dogs = JSON.stringify(this.dogs);
+        localStorage.dogs = JSON.stringify(localStorageFavDocs);
       }
     },
     showFavourite(dog) {
