@@ -17,7 +17,7 @@
         />
       </div>
     </div>
-    <div v-if="dogs.length === 0" class="empty">
+    <div v-if="dogs.length === 0 && activeState !== 'loading'" class="empty">
       ...Ooooppssss, no dogs to show
     </div>
     <div v-if="dogs.length" v-observe-visibility="infiniteHandler"></div>
