@@ -1,13 +1,18 @@
 <template>
   <div class="main">
     <div class="main__dogs">
-      <div v-for="imageSrc in dogsImages" :key="imageSrc" class="imagesRow">
-        <img :src="imageSrc" alt="dog picture" />
+      <div v-for="dog in dogs" :key="dog.imgSrc" class="imagesRow">
+        <img
+          :src="dog.imgSrc"
+          alt="dog picture"
+          @mouseover="showFavourite(dog)"
+          @mouseout="hideFavourite(dog)"
+        />
         <img
           :src="getFavouriteImage"
           alt="favourite"
           class="favIcon"
-          :class="{ shown: isFavouriteShown, favActive: isFavouriteActive }"
+          :class="{ shown: dog.isFavouriteShown, favActive: dog.isFavourite }"
         />
       </div>
     </div>
@@ -19,6 +24,8 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import favEmpty from "../assets/favEmpty.svg";
+import favFullfield from "../assets/favFullfield.svg";
+
 import VLoader from "./shared/VLoader.vue";
 export default {
   components: { VLoader },
@@ -26,8 +33,8 @@ export default {
   data() {
     return {
       favEmpty,
-      isFavouriteShown: true,
-      isFavouriteActive: false,
+      favFullfield,
+      dogs: [],
     };
   },
 
@@ -52,6 +59,14 @@ export default {
     this.clearDogsImagesData();
     this.setSelectedBreed({ breedName: "" });
   },
+  watch: {
+    dogsImages() {
+      let copyArr = [...this.dogsImages];
+      this.dogs = copyArr.map((el) => {
+        return { imgSrc: el, isFavourite: false, isFavouriteShown: false };
+      });
+    },
+  },
   methods: {
     ...mapActions("dogs", [
       "getAllBreeds",
@@ -59,6 +74,13 @@ export default {
       "clearDogsImagesData",
       "setSelectedBreed",
     ]),
+    showFavourite(dog) {
+      dog.isFavouriteShown = true;
+      console.log(this.filteredDogsImages);
+    },
+    hideFavourite(dog) {
+      dog.isFavouriteShown = false;
+    },
     async infiniteHandler() {
       debugger;
       let that = this;
@@ -98,6 +120,9 @@ export default {
         width: 200px;
         height: 200px;
         object-fit: cover;
+        &:hover {
+          cursor: pointer;
+        }
       }
       .favIcon {
         display: none;
@@ -108,6 +133,7 @@ export default {
         height: 30px;
         &.shown {
           display: unset;
+          pointer-events: none;
         }
       }
     }
