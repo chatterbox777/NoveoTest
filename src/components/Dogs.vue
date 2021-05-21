@@ -1,27 +1,29 @@
 <template>
   <div class="main">
     <div class="main__dogs">
-      <div v-for="dog in dogs" :key="dog.imgSrc" class="imagesRow">
+      <div v-for="dog in dogs" :key="dog.id" class="imagesRow">
         <img
           :src="dog.imgSrc"
           alt="dog picture"
           @mouseover="showFavourite(dog)"
           @mouseout="hideFavourite(dog)"
+          @click="toggleFavourite(dog)"
         />
         <img
-          :src="getFavouriteImage"
+          :src="getFavouriteImage(dog)"
           alt="favourite"
           class="favIcon"
           :class="{ shown: dog.isFavouriteShown, favActive: dog.isFavourite }"
         />
       </div>
     </div>
-    <div v-if="dogsImages.length" v-observe-visibility="infiniteHandler"></div>
+    <div v-if="dogs.length" v-observe-visibility="infiniteHandler"></div>
     <VLoader v-if="activeState === 'loading'" />
   </div>
 </template>
 
 <script>
+import { v4 as uuidv4 } from "uuid";
 import { mapState, mapActions } from "vuex";
 import favEmpty from "../assets/favEmpty.svg";
 import favFullfield from "../assets/favFullfield.svg";
@@ -48,23 +50,59 @@ export default {
       selectedBreed: (state) => state.selectedBreed,
       activeState: (state) => state.activeState,
     }),
-    getFavouriteImage() {
-      return favEmpty;
-    },
   },
   mounted() {
-    this.getAllBreeds();
+    let that = this;
+    this.dogs = [];
+
+    if (localStorage.dogs) {
+      let filteredLocalStorageDogsByBreed = [
+        ...JSON.parse(localStorage.dogs),
+      ].filter((el) => {
+        el.breed === that.selectedBreed;
+      });
+
+      that.dogs = filteredLocalStorageDogsByBreed;
+    }
+    console.log(this.dogs);
+  },
+  updated() {
+    // debugger;
+    // if (localStorage.dogs) {
+    //   this.dogs = localStorage.dogs.map((el) => JSON.parse(el));
+    // }
+    // console.log(this.dogs);
   },
   destroyed() {
+    debugger;
     this.clearDogsImagesData();
+    this.dogs = [];
     this.setSelectedBreed({ breedName: "" });
   },
   watch: {
     dogsImages() {
-      let copyArr = [...this.dogsImages];
-      this.dogs = copyArr.map((el) => {
-        return { imgSrc: el, isFavourite: false, isFavouriteShown: false };
+      debugger;
+      let that = this;
+      let copyArr = [...this.dogsImages].map((el) => {
+        // let regexp = /breeds\/(\w+)\//;
+        // let breed = el.match(regexp);
+
+        return {
+          imgSrc: el,
+          isFavourite: false,
+          isFavouriteShown: false,
+          breed: that.selectedBreed,
+          id: uuidv4(),
+        };
       });
+      console.log(copyArr);
+
+      if (localStorage.dogs) {
+        let endArr = [...copyArr];
+        that.dogs = [...that.dogs, ...new Set(endArr)];
+      } else {
+        that.dogs = [...that.dogs, ...new Set(copyArr)];
+      }
     },
   },
   methods: {
@@ -74,9 +112,30 @@ export default {
       "clearDogsImagesData",
       "setSelectedBreed",
     ]),
+    getFavouriteImage(dog) {
+      switch (dog.isFavourite) {
+        case true:
+          return this.favFullfield;
+        case false:
+          return this.favEmpty;
+        default:
+          break;
+      }
+    },
+    toggleFavourite(dog) {
+      dog.isFavourite = !dog.isFavourite;
+      let that = this;
+      if (localStorage.dogs) {
+        localStorage.dogs = JSON.stringify([
+          ...that.dogs,
+          ...JSON.parse(localStorage.dogs),
+        ]);
+      } else {
+        localStorage.dogs = JSON.stringify(this.dogs);
+      }
+    },
     showFavourite(dog) {
       dog.isFavouriteShown = true;
-      console.log(this.filteredDogsImages);
     },
     hideFavourite(dog) {
       dog.isFavouriteShown = false;
@@ -134,6 +193,9 @@ export default {
         &.shown {
           display: unset;
           pointer-events: none;
+        }
+        &.favActive {
+          display: unset;
         }
       }
     }

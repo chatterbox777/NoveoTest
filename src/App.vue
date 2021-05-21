@@ -30,7 +30,8 @@ export default {
       async set(value) {
         this.clearDogsImagesData();
         this.setSelectedBreed({ value });
-        await this.getDogsImagesByBreed({ value });
+        debugger;
+        await this.getDogsImagesByBreed({ breedName: value });
         this.$router.push({ name: "Dogs" });
       },
     },
