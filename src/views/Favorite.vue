@@ -1,23 +1,25 @@
 <template>
   <div class="main">
-    <div v-if="dogs.length > 0" class="main__dogs">
+    <div v-if="dogs.length > 0" class="main__favorite">
       <div v-for="dog in dogs" :key="dog.id" class="imagesRow">
         <img
           :src="dog.imgSrc"
           alt="dog picture"
-          @mouseover="showFavourite(dog)"
-          @mouseout="hideFavourite(dog)"
-          @click="toggleFavourite(dog)"
+          @mouseover="showFavorite(dog)"
+          @mouseout="hideFavorite(dog)"
+          @click="toggleFavorite(dog)"
         />
         <img
-          :src="getFavouriteImage(dog)"
-          alt="favourite"
+          :src="getFavoriteImage(dog)"
+          alt="favorite"
           class="favIcon"
-          :class="{ shown: dog.isFavouriteShown, favActive: dog.isFavourite }"
+          :class="{ shown: dog.isFavoriteShown, favActive: dog.isFavorite }"
         />
       </div>
     </div>
-    <div v-if="dogs.length === 0">...Empty</div>
+    <div v-if="dogs.length === 0" class="empty">
+      ...Ooops nothing to show, select breed and add some dogs to favorites
+    </div>
   </div>
 </template>
 
@@ -41,7 +43,6 @@ export default {
       dogsImages: (state) => state.dogsImages,
       isLoading: (state) => state.isLoading.dogsImages,
       selectedBreed: (state) => state.selectedBreed,
-      activeState: (state) => state.activeState,
     }),
   },
   mounted() {
@@ -49,10 +50,9 @@ export default {
     this.dogs = [];
     if (localStorage.dogs) {
       that.dogs = JSON.parse(localStorage.dogs).filter((el) => {
-        return el.isFavourite === true;
+        return el.isFavorite === true;
       });
     }
-    console.log(this.dogs);
   },
 
   methods: {
@@ -62,8 +62,8 @@ export default {
       "clearDogsImagesData",
       "setSelectedBreed",
     ]),
-    getFavouriteImage(dog) {
-      switch (dog.isFavourite) {
+    getFavoriteImage(dog) {
+      switch (dog.isFavorite) {
         case true:
           return this.favFullfield;
         case false:
@@ -72,31 +72,38 @@ export default {
           break;
       }
     },
-    toggleFavourite(dog) {
-      let localStorageFavDocs = this.dogs.filter((el) => el.isFavourite);
-      dog.isFavourite = !dog.isFavourite;
+    toggleFavorite(dog) {
+      let localStorageFavDocs = this.dogs.filter((el) => el.isFavorite);
+      dog.isFavorite = !dog.isFavorite;
       localStorage.dogs = JSON.stringify(this.dogs);
       localStorage.dogs = JSON.stringify([...localStorageFavDocs]);
       this.dogs = this.dogs.filter((el) => {
-        return el.isFavourite === true;
+        return el.isFavorite === true;
       });
     },
-    showFavourite(dog) {
-      dog.isFavouriteShown = true;
+    showFavorite(dog) {
+      dog.isFavoriteShown = true;
     },
-    hideFavourite(dog) {
-      dog.isFavouriteShown = false;
+    hideFavorite(dog) {
+      dog.isFavoriteShown = false;
     },
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped lang="scss">
+.empty {
+  position: absolute;
+  left: 30%;
+  top: 50%;
+  font-size: 24px;
+}
 .main {
   height: 1vh;
   margin-top: 100px;
-  .main__dogs {
+
+  .main__favorite {
     display: grid;
     justify-items: center;
     align-items: center;
@@ -134,6 +141,7 @@ export default {
         }
         &.favActive {
           display: unset;
+          pointer-events: none;
         }
       }
     }

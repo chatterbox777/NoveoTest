@@ -28,7 +28,6 @@ export default {
       }
     },
     async getDogsImagesByBreed({ commit, dispatch }, { breedName }) {
-      // debugger;
       try {
         dispatch("setActiveState", { payload: "loading" });
         commit({
@@ -72,7 +71,6 @@ export default {
       state.breeds = breeds;
     },
     GET_DOGS_IMAGES_BY_BREED(state, { dogsImages }) {
-      debugger;
       state.dogsImages = [...state.dogsImages, ...dogsImages];
       console.log(`DOGS IMAGES: ${state.dogsImages}`);
     },

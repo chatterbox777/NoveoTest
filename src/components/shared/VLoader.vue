@@ -23,6 +23,5 @@ export default {
 img {
   width: 48px;
   height: 48px;
-  //   animation: rotate 1s linear infinite;
 }
 </style>

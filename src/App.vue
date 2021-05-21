@@ -3,7 +3,11 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/favorite">Favorite</router-link>
-      <select @change="onChange" v-model="selectedBreedReactive">
+      <select
+        class="selectBreed"
+        @change="onChange"
+        v-model="selectedBreedReactive"
+      >
         <option disabled value="">Choose breed</option>
         <option v-for="breed in breeedsArray" :key="breed + Date.now()">
           {{ breed }}
@@ -61,9 +65,9 @@ export default {
 };
 </script>
 <style lang="scss">
->>> .vs__dropdown-toggle {
-  display: flex;
-  flex-direction: row;
+.selectBreed {
+  font-family: Avenir;
+  font-size: 14px;
 }
 #breedSelector {
   display: flex;

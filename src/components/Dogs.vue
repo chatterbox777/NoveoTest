@@ -5,19 +5,21 @@
         <img
           :src="dog.imgSrc"
           alt="dog picture"
-          @mouseover="showFavourite(dog)"
-          @mouseout="hideFavourite(dog)"
-          @click="toggleFavourite(dog)"
+          @mouseover="showFavorite(dog)"
+          @mouseout="hideFavorite(dog)"
+          @click="toggleFavorite(dog)"
         />
         <img
-          :src="getFavouriteImage(dog)"
-          alt="favourite"
+          :src="getFavoriteImage(dog)"
+          alt="favorite"
           class="favIcon"
-          :class="{ shown: dog.isFavouriteShown, favActive: dog.isFavourite }"
+          :class="{ shown: dog.isFavoriteShown, favActive: dog.isFavorite }"
         />
       </div>
     </div>
-    <div v-if="dogs.length === 0">...Empty</div>
+    <div v-if="dogs.length === 0" class="empty">
+      ...Ooooppssss, no dogs to show
+    </div>
     <div v-if="dogs.length" v-observe-visibility="infiniteHandler"></div>
     <VLoader v-if="activeState === 'loading'" />
   </div>
@@ -26,10 +28,12 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 import { mapState, mapActions } from "vuex";
+
 import favEmpty from "../assets/favEmpty.svg";
 import favFullfield from "../assets/favFullfield.svg";
 
 import VLoader from "./shared/VLoader.vue";
+
 export default {
   components: { VLoader },
   name: "Dogs",
@@ -54,7 +58,7 @@ export default {
   },
 
   beforeDestroy() {
-    let localStorageFavDocs = this.dogs.filter((el) => el.isFavourite);
+    let localStorageFavDocs = this.dogs.filter((el) => el.isFavorite);
     if (localStorage.dogs) {
       localStorage.dogs = JSON.stringify([
         ...localStorageFavDocs,
@@ -65,25 +69,22 @@ export default {
     }
   },
   destroyed() {
-    debugger;
     this.clearDogsImagesData();
     this.dogs = [];
     this.setSelectedBreed({ breedName: "" });
   },
   watch: {
     dogsImages() {
-      debugger;
       let that = this;
       let copyArr = [...this.dogsImages].map((el) => {
         return {
           imgSrc: el,
-          isFavourite: false,
-          isFavouriteShown: false,
+          isFavorite: false,
+          isFavoriteShown: false,
           breed: that.selectedBreed,
           id: uuidv4(),
         };
       });
-      console.log(copyArr);
 
       if (localStorage.dogs) {
         let endArr = [...copyArr];
@@ -102,8 +103,8 @@ export default {
       "clearDogsImagesData",
       "setSelectedBreed",
     ]),
-    getFavouriteImage(dog) {
-      switch (dog.isFavourite) {
+    getFavoriteImage(dog) {
+      switch (dog.isFavorite) {
         case true:
           return this.favFullfield;
         case false:
@@ -112,17 +113,16 @@ export default {
           break;
       }
     },
-    toggleFavourite(dog) {
-      dog.isFavourite = !dog.isFavourite;
+    toggleFavorite(dog) {
+      dog.isFavorite = !dog.isFavorite;
     },
-    showFavourite(dog) {
-      dog.isFavouriteShown = true;
+    showFavorite(dog) {
+      dog.isFavoriteShown = true;
     },
-    hideFavourite(dog) {
-      dog.isFavouriteShown = false;
+    hideFavorite(dog) {
+      dog.isFavoriteShown = false;
     },
     async infiniteHandler() {
-      debugger;
       let that = this;
 
       if (
@@ -136,11 +136,17 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.empty {
+  position: absolute;
+  left: 40%;
+  top: 50%;
+  font-size: 24px;
+}
 .main {
   height: 1vh;
   margin-top: 100px;
+
   .main__dogs {
     display: grid;
     justify-items: center;
@@ -179,6 +185,7 @@ export default {
         }
         &.favActive {
           display: unset;
+          pointer-events: none;
         }
       }
     }
