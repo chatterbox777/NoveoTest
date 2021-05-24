@@ -1,14 +1,15 @@
 <template>
   <div class="main">
     <div v-if="dogs.length > 0" class="main__favorite">
-      <div v-for="dog in dogs" :key="dog.id" class="imagesRow">
-        <img
-          :src="dog.imgSrc"
-          alt="dog picture"
-          @mouseover="showFavorite(dog)"
-          @mouseout="hideFavorite(dog)"
-          @click="toggleFavorite(dog)"
-        />
+      <div
+        v-for="dog in dogs"
+        :key="dog.id"
+        @mouseover="showFavorite(dog)"
+        @mouseout="hideFavorite(dog)"
+        @click="toggleFavorite(dog)"
+        class="imagesRow"
+      >
+        <img :src="dog.imgSrc" alt="dog picture" />
         <img
           :src="getFavoriteImage(dog)"
           alt="favorite"
