@@ -1,19 +1,19 @@
 <template>
-  <div class="main">
-    <div v-if="dogs.length > 0" class="main__favorite">
+  <div class="favorite">
+    <div v-if="dogs.length > 0" class="favorite__main">
       <div
         v-for="dog in dogs"
         :key="dog.id"
         @mouseover="showFavorite(dog)"
         @mouseout="hideFavorite(dog)"
         @click="toggleFavorite(dog)"
-        class="imagesRow"
+        class="favorite__images"
       >
         <img :src="dog.imgSrc" alt="dog picture" />
         <img
           :src="getFavoriteImage(dog)"
           alt="favorite"
-          class="favIcon"
+          class="favorite__favIcon"
           :class="{ shown: dog.isFavoriteShown, favActive: dog.isFavorite }"
         />
       </div>
@@ -100,50 +100,50 @@ export default {
   top: 50%;
   font-size: 24px;
 }
-.main {
+.favorite {
   height: 1vh;
   margin-top: 100px;
 
-  .main__favorite {
+  .favorite__main {
     display: grid;
     justify-items: center;
     align-items: center;
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 40px;
+  }
 
-    .imagesRow {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  .favorite__images {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+    img {
       width: 200px;
       height: 200px;
-      img {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-        border: 1px solid grey;
-        box-shadow: 0px 0px 5px 2px grey;
+      object-fit: cover;
+      border: 1px solid grey;
+      box-shadow: 0px 0px 5px 2px grey;
 
-        &:hover {
-          cursor: pointer;
-        }
+      &:hover {
+        cursor: pointer;
       }
-      .favIcon {
-        display: none;
-        position: absolute;
-        right: 10px;
-        bottom: 10px;
-        width: 30px;
-        height: 30px;
-        &.shown {
-          display: unset;
-          pointer-events: none;
-        }
-        &.favActive {
-          display: unset;
-          pointer-events: none;
-        }
+    }
+    .favorite__favIcon {
+      display: none;
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      width: 30px;
+      height: 30px;
+      &.shown {
+        display: unset;
+        pointer-events: none;
+      }
+      &.favActive {
+        display: unset;
+        pointer-events: none;
       }
     }
   }
