@@ -18,7 +18,7 @@ const routes = [
     component: () => import("../views/Favorite.vue"),
   },
   {
-    path: "/dogs",
+    path: "/dogs/:breed",
     name: "Dogs",
     component: Dogs,
   },

@@ -54,8 +54,12 @@ export default {
       activeState: (state) => state.activeState,
     }),
   },
-  mounted() {
+  async mounted() {
     this.dogs = [];
+    if (this.$route?.params?.breed) {
+      this.setSelectedBreed({ breedName: this.$route.params.breed });
+      await this.getDogsImagesByBreed({ breedName: this.$route.params.breed });
+    }
   },
 
   beforeDestroy() {
